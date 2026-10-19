@@ -1,0 +1,37 @@
+[
+  {
+    "event_id": "blast:rivals-hong-kong-2026",
+    "title": "BLAST Premier Rivals Hong Kong 2026",
+    "title_tc": "",
+    "category": "esports",
+    "game": "Counter-Strike 2",
+    "game_aliases": ["CS2", "Counter-Strike", "反恐精英", "絕對武力"],
+    "date_text": "13-15/11/2026 (public arena dates); tournament: 11-15/11/2026",
+    "start_local": "",
+    "venue": "AsiaWorld-Arena (Hall 1), AsiaWorld-Expo, Hong Kong",
+    "price_text": "Venue lists single-day seat categories from HK$98 to HK$1028 across 13-15 Nov; packages separately priced. HKTB price summary differs; verify current ticket seller. Availability and fees not verified.",
+    "source": "https://blast.tv/cs/tournaments/rivals-2026-season-2",
+    "detail_url": "https://www.asiaworld-expo.com/zh-sc/whats-on/upcoming-events/events/blast-premier-hong-kong-rivals-2026/?ebmsid=24877&event_type=Special+Event",
+    "location_scope": "hong_kong",
+    "timezone": "Asia/Hong_Kong",
+    "status": "scheduled_as_of_2026-10-19",
+    "provenance": "curated_from_official_websites",
+    "verified_on": "2026-10-19",
+    "tournament_start_date": "2026-11-11",
+    "tournament_end_date": "2026-11-15",
+    "public_start_date": "2026-11-13",
+    "public_end_date": "2026-11-15",
+    "public_dates": ["2026-11-13", "2026-11-14", "2026-11-15"],
+    "date_basis": "BLAST tournament period; AsiaWorld-Expo and HKTB public arena dates",
+    "price_needs_review": true,
+    "start_time_needs_review": true,
+    "ticket_url": "https://hkt.hkticketing.com/en/#/allEvents/detail?projectId=50000001587006",
+    "verification_sources": [
+      "https://blastpremier.com/",
+      "https://blast.tv/cs/tournaments/rivals-2026-season-2",
+      "https://www.asiaworld-expo.com/zh-sc/whats-on/upcoming-events/events/blast-premier-hong-kong-rivals-2026/?ebmsid=24877&event_type=Special+Event",
+      "https://www.discoverhongkong.com/eng/events/event.id90102.blast-premier-rivals-hong-kong-2026.html"
+    ],
+    "notes": "One tournament-level record, not individual matches. No team pairings or precise daily match times inferred. Aliases are editorial search aids. Official webpages are supplementary sources, not government open-data records."
+  }
+]

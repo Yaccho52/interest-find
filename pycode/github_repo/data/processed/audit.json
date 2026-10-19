@@ -1,0 +1,46 @@
+{
+  "events": 1103,
+  "venues": 165,
+  "duplicate_event_ids": 0,
+  "missing_fields": {
+    "titlec": 0,
+    "titlee": 0,
+    "descc": 922,
+    "desce": 945,
+    "pricec": 595,
+    "latitude": 383
+  },
+  "category_counts": {
+    "inc4": 716,
+    "inc7": 318,
+    "inc9": 68,
+    "inc6": 1
+  },
+  "subcategory_counts": {
+    "inc4sc7": 10,
+    "inc4sc1": 114,
+    "inc4sc3": 74,
+    "inc4sc8": 68,
+    "inc4sc6": 25,
+    "inc4sc2": 106,
+    "inc4sc9": 33,
+    "inc4sc12": 42,
+    "inc4sc4": 29,
+    "inc4sc10": 8,
+    "inc7sc3": 53,
+    "inc7sc1": 74,
+    "inc4sc14": 186,
+    "inc9sc2": 12,
+    "inc9sc3": 56,
+    "inc7sc8": 142,
+    "inc4sc5": 20,
+    "inc6sc1": 1,
+    "inc7sc5": 2,
+    "inc4sc11": 1,
+    "inc7sc2": 44,
+    "inc7sc6": 3
+  },
+  "events_without_date_records": 0,
+  "events_with_dates_needing_review": 1,
+  "unmatched_venues": 0
+}

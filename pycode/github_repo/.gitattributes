@@ -1,0 +1,11 @@
+# 保留网页和源码的跨平台文本格式
+* text=auto
+*.py text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.bat text eol=crlf
+*.npz binary
+*.pdf binary
