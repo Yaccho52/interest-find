@@ -1,0 +1,47 @@
+Python: C:\Users\16686\AppData\Local\Programs\Python\Python314\python.exe
+工作目录: C:\Users\16686\Desktop\chatgpt\project python\pycode
+
+正在执行：model_events.py
+[1/6] 正在读取活动数据……
+[2/6] 已读取 1231 条记录，正在计算 TF-IDF……
+[3/6] 正在运行三次主题聚类……
+      聚类初始化 1/3 已完成
+      聚类初始化 2/3 已完成
+      聚类初始化 3/3 已完成
+[4/6] 正在比较关键词、TF-IDF 和多样性排序……
+[5/6] 正在保存模型、目录和报告……
+[6/6] 建模完成。
+{
+  "catalog_size": 1231,
+  "vocabulary_size": 12000,
+  "title_groups": 893,
+  "unknown_dates": 1,
+  "evaluation": {
+    "protocol": "目录内检索代理评估；无用户反馈；非留出测试；按相同标题排除自匹配",
+    "queries": 100,
+    "empty_query_vectors": 0,
+    "methods": {
+      "keyword": {
+        "category_precision_at_5": 0.634,
+        "catalog_coverage": 0.21608448415922016,
+        "mean_intra_list_similarity": 0.3204769703000784
+      },
+      "tfidf": {
+        "category_precision_at_5": 0.6099999999999999,
+        "catalog_coverage": 0.25345247766043866,
+        "mean_intra_list_similarity": 0.38297410059720277
+      },
+      "tfidf_mmr": {
+        "category_precision_at_5": 0.6099999999999999,
+        "catalog_coverage": 0.26157595450852966,
+        "mean_intra_list_similarity": 0.3333404887048528
+      }
+    }
+  }
+}
+
+正在执行：check_models.py
+{"status": "通过", "checks": ["TF-IDF公式", "向量归一化", "聚类", "BLAST观众日期", "足球查询", "未知词", "已选活动排除", "标题去重", "未来日期过滤"]}
+
+正在执行：build_website.py
+网站已导出：1231 条活动，34 条兴趣路径。

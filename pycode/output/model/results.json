@@ -1,0 +1,807 @@
+{
+  "python": "C:\\Users\\16686\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5",
+  "seed": 7005,
+  "catalog_size": 1231,
+  "vocabulary_size": 12000,
+  "title_groups": 893,
+  "unknown_dates": 1,
+  "sources": {
+    "LCSD": 1103,
+    "official_website_extraction": 110,
+    "government_open_data": 17,
+    "curated_from_official_websites": 1
+  },
+  "input_sha256": {
+    "events.csv": "7913f355e18b8545f9f6c8277f27cefc232cb7a34e1a140cbd7f9652a964fa76",
+    "sports_events.csv": "b0b7ad2d59cf434d0c6604a6a7e8b224b30506e405f8357fd1961dbf5ffde4e8",
+    "esports_supplements.json": "5aa6c0eee0c8d06048d5df92a956417c94f90794c4e22a90ab40b8711191b883"
+  },
+  "clustering": {
+    "k": 8,
+    "objective": 0.3488834798336029,
+    "iterations": 13,
+    "restart_objectives": [
+      0.3072686791419983,
+      0.3398228883743286,
+      0.3488834798336029
+    ],
+    "topics": [
+      {
+        "cluster": 0,
+        "size": 193,
+        "terms": [
+          "vs",
+          "eastern",
+          "district",
+          "kitchee",
+          "hkfc",
+          "supreme",
+          "shatin",
+          "bc",
+          "rangers",
+          "man"
+        ],
+        "examples": [
+          "Kitchee vs Eastern District",
+          "Eastern District vs Kitchee",
+          "HKFC vs Eastern District",
+          "Eastern District vs HKFC",
+          "Eastern District vs Eastern"
+        ]
+      },
+      {
+        "cluster": 1,
+        "size": 91,
+        "terms": [
+          "粵劇",
+          "opera",
+          "cantonese",
+          "折子",
+          "子戲",
+          "折子戲",
+          "劇折子",
+          "粵劇折",
+          "劇折",
+          "excerpts"
+        ],
+        "examples": [
+          "《凝芳薈聚樂滔滔》粵劇折子戲",
+          "《悅鳴花放折子戲》粵劇折子戲",
+          "《璋鑑折子戲匯知音》粵劇折子戲",
+          "《驀然回首三十秋　黃春強粵劇舞台藝術全武行》粵劇折子戲",
+          "《威武龍騰鳳凰薈》粵劇折子戲"
+        ]
+      },
+      {
+        "cluster": 2,
+        "size": 123,
+        "terms": [
+          "concert",
+          "金曲",
+          "演唱會",
+          "唱會",
+          "演唱",
+          "知音",
+          "oldies",
+          "曲演",
+          "曲演唱",
+          "songs"
+        ],
+        "examples": [
+          "屯門好友金曲演唱會",
+          "歌聲飛揚國語金曲演唱會",
+          "雅荔昇輝同滙聚粵曲演唱會",
+          "粤曲演唱會",
+          "多姿多彩金曲演唱會"
+        ]
+      },
+      {
+        "cluster": 3,
+        "size": 112,
+        "terms": [
+          "音樂",
+          "樂會",
+          "音樂會",
+          "music",
+          "concert",
+          "匯演",
+          "show",
+          "variety",
+          "樂劇",
+          "音樂劇"
+        ],
+        "examples": [
+          "「武俠春秋•俠骨柔情」音樂會",
+          "2026秋季音樂會",
+          "（音樂會）",
+          "和諧音樂會",
+          "(音樂會)"
+        ]
+      },
+      {
+        "cluster": 4,
+        "size": 166,
+        "terms": [
+          "訓練",
+          "舞蹈",
+          "訓練班",
+          "練班",
+          "dance",
+          "蹈訓練",
+          "舞蹈訓",
+          "蹈訓",
+          "粵曲",
+          "classes"
+        ],
+        "examples": [
+          "舞蹈訓練班",
+          "舞蹈訓練班",
+          "舞蹈訓練班",
+          "舞蹈訓練班",
+          "舞蹈訓練班"
+        ]
+      },
+      {
+        "cluster": 5,
+        "size": 131,
+        "terms": [
+          "故事時",
+          "事時",
+          "童故事",
+          "童故",
+          "兒童故",
+          "事時間",
+          "兒童",
+          "故事",
+          "時間",
+          "children"
+        ],
+        "examples": [
+          "兒童故事時間",
+          "兒童故事時間",
+          "兒童故事時間",
+          "兒童故事時間",
+          "兒童故事時間"
+        ]
+      },
+      {
+        "cluster": 6,
+        "size": 259,
+        "terms": [
+          "香港",
+          "exhibition",
+          "展覽",
+          "計劃",
+          "文化",
+          "巡迴",
+          "社區",
+          "巡迴展",
+          "迴展",
+          "藝術"
+        ],
+        "examples": [
+          "2026社區文化大使: 香港非洲藝術文化協會「節拍部落」互動鼓舞巡演",
+          "2026社區文化大使: 香港非洲藝術文化協會「節拍部落」互動鼓舞巡演",
+          "2026社區文化大使: 香港非洲藝術文化協會「節拍部落」互動鼓舞巡演",
+          "2026社區文化大使: 香港非洲藝術文化協會「節拍部落」互動鼓舞巡演",
+          "2026社區文化大使: 香港非洲藝術文化協會「節拍部落」互動鼓舞巡演"
+        ]
+      },
+      {
+        "cluster": 7,
+        "size": 156,
+        "terms": [
+          "籍介",
+          "籍介紹",
+          "書籍介",
+          "介紹",
+          "書籍",
+          "童書",
+          "童書籍",
+          "兒童書",
+          "display",
+          "book"
+        ],
+        "examples": [
+          "兒童書籍介紹 － 中國寓言",
+          "兒童書籍介紹 － 藝術‧我也懂",
+          "兒童書籍介紹 － 趣味中國史",
+          "兒童書籍介紹 － 恐龍來了",
+          "兒童書籍介紹 － 紙品藝術"
+        ]
+      }
+    ]
+  },
+  "evaluation": {
+    "protocol": "目录内检索代理评估；无用户反馈；非留出测试；按相同标题排除自匹配",
+    "queries": 100,
+    "empty_query_vectors": 0,
+    "methods": {
+      "keyword": {
+        "category_precision_at_5": 0.634,
+        "catalog_coverage": 0.21608448415922016,
+        "mean_intra_list_similarity": 0.3204769703000784
+      },
+      "tfidf": {
+        "category_precision_at_5": 0.6099999999999999,
+        "catalog_coverage": 0.25345247766043866,
+        "mean_intra_list_similarity": 0.38297410059720277
+      },
+      "tfidf_mmr": {
+        "category_precision_at_5": 0.6099999999999999,
+        "catalog_coverage": 0.26157595450852966,
+        "mean_intra_list_similarity": 0.3333404887048528
+      }
+    }
+  },
+  "examples": {
+    "CS2 BLAST": [
+      {
+        "event_id": "blast:rivals-hong-kong-2026",
+        "title": "BLAST Premier Rivals Hong Kong 2026",
+        "score": 0.6465,
+        "matched_terms": [
+          "cs2",
+          "blast"
+        ],
+        "category": "esports",
+        "venue": "AsiaWorld-Arena (Hall 1), AsiaWorld-Expo, Hong Kong",
+        "dates": [
+          "2026-11-13",
+          "2026-11-14",
+          "2026-11-15"
+        ],
+        "price_text": "Venue lists single-day seat categories from HK$98 to HK$1028 across 13-15 Nov; packages separately priced. HKTB price summary differs; verify current ticket seller. Availability and fees not verified.",
+        "url": "https://www.asiaworld-expo.com/zh-sc/whats-on/upcoming-events/events/blast-premier-hong-kong-rivals-2026/?ebmsid=24877&event_type=Special+Event"
+      }
+    ],
+    "足球 football": [
+      {
+        "event_id": "hkfa:49947",
+        "title": "Tai Po vs Kwoon Chung Southern",
+        "score": 0.15,
+        "matched_terms": [
+          "类别匹配:football"
+        ],
+        "category": "football",
+        "venue": "Tai Po Sports Ground",
+        "dates": [
+          "2026-10-19"
+        ],
+        "price_text": "$100, $40",
+        "url": "https://www.hkfa.com/en/competitions/fixtures?competition=2041&year=2026-2027"
+      },
+      {
+        "event_id": "hkfa:49953",
+        "title": "Golik North District vs Wofoo Kowloon City",
+        "score": 0.15,
+        "matched_terms": [
+          "类别匹配:football"
+        ],
+        "category": "football",
+        "venue": "North District Sports Ground",
+        "dates": [
+          "2026-11-08"
+        ],
+        "price_text": "(票價待定 Ticket Prices TBC)",
+        "url": "https://www.hkfa.com/en/competitions/fixtures?competition=2041&year=2026-2027"
+      },
+      {
+        "event_id": "hkfa:49951",
+        "title": "Supreme Shatin vs BC Rangers",
+        "score": 0.15,
+        "matched_terms": [
+          "类别匹配:football"
+        ],
+        "category": "football",
+        "venue": "Hammer Hill Road Sports Ground",
+        "dates": [
+          "2026-11-07"
+        ],
+        "price_text": "(票價待定 Ticket Prices TBC)",
+        "url": "https://www.hkfa.com/en/competitions/fixtures?competition=2041&year=2026-2027"
+      },
+      {
+        "event_id": "hkfa:49948",
+        "title": "Lee Man vs Kitchee",
+        "score": 0.15,
+        "matched_terms": [
+          "类别匹配:football"
+        ],
+        "category": "football",
+        "venue": "Mong Kok Stadium",
+        "dates": [
+          "2026-10-19"
+        ],
+        "price_text": "$100, $40",
+        "url": "https://www.hkfa.com/en/competitions/fixtures?competition=2041&year=2026-2027"
+      },
+      {
+        "event_id": "hkfa:49954",
+        "title": "HKFC vs Eastern",
+        "score": 0.15,
+        "matched_terms": [
+          "类别匹配:football"
+        ],
+        "category": "football",
+        "venue": "Hong Kong Football Club Football Ground",
+        "dates": [
+          "2026-11-08"
+        ],
+        "price_text": "(票價待定 Ticket Prices TBC)",
+        "url": "https://www.hkfa.com/en/competitions/fixtures?competition=2041&year=2026-2027"
+      }
+    ],
+    "音樂 music": [
+      {
+        "event_id": "lcsd:188343",
+        "title": "（音樂會）",
+        "score": 0.5128,
+        "matched_terms": [
+          "music",
+          "音樂"
+        ],
+        "category": "inc4sc1",
+        "venue": "香港大會堂 (音樂廳)",
+        "dates": [
+          "2026-11-14"
+        ],
+        "price_text": "$800, $560, $350",
+        "url": ""
+      },
+      {
+        "event_id": "lcsd:186922",
+        "title": "（音樂劇）",
+        "score": 0.3489,
+        "matched_terms": [
+          "音樂",
+          "music"
+        ],
+        "category": "inc4sc1",
+        "venue": "香港大會堂 (劇院)",
+        "dates": [
+          "2026-10-22",
+          "2026-10-23",
+          "2026-10-24"
+        ],
+        "price_text": "$380",
+        "url": "https://www.hongkongsingers.org/"
+      },
+      {
+        "event_id": "lcsd:189292",
+        "title": "「武俠春秋•俠骨柔情」音樂會",
+        "score": 0.4604,
+        "matched_terms": [
+          "音樂",
+          "music"
+        ],
+        "category": "inc4sc1",
+        "venue": "香港大會堂 (音樂廳)",
+        "dates": [
+          "2026-11-08"
+        ],
+        "price_text": "$320, $240, $160",
+        "url": ""
+      },
+      {
+        "event_id": "lcsd:189112",
+        "title": "兒童書籍介紹 － 音樂天地",
+        "score": 0.3121,
+        "matched_terms": [
+          "music",
+          "音樂"
+        ],
+        "category": "inc7sc8",
+        "venue": "馬鞍山公共圖書館",
+        "dates": [
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05",
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-10",
+          "2026-10-11",
+          "2026-10-12",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16",
+          "2026-10-17",
+          "2026-10-18",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22",
+          "2026-10-23",
+          "2026-10-24",
+          "2026-10-25",
+          "2026-10-26",
+          "2026-10-27",
+          "2026-10-28",
+          "2026-10-29",
+          "2026-10-30",
+          "2026-10-31"
+        ],
+        "price_text": "未知",
+        "url": "http://www.hkpl.gov.hk/tc/extension-activities/all-events/search?lib_id=1016"
+      },
+      {
+        "event_id": "lcsd:188889",
+        "title": "音樂事務處音樂展覽 –《古琴篇》",
+        "score": 0.2392,
+        "matched_terms": [
+          "music",
+          "音樂"
+        ],
+        "category": "inc7sc3",
+        "venue": "瑞和街公共圖書館",
+        "dates": [
+          "2026-10-17",
+          "2026-10-18",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22",
+          "2026-10-23",
+          "2026-10-24",
+          "2026-10-25",
+          "2026-10-26",
+          "2026-10-27",
+          "2026-10-28",
+          "2026-10-29"
+        ],
+        "price_text": "未知",
+        "url": "http://www.hkpl.gov.hk/tc/extension-activities/all-events/search?lib_id=1008"
+      }
+    ],
+    "兒童 children": [
+      {
+        "event_id": "lcsd:189038",
+        "title": "兒童故事時間",
+        "score": 0.3285,
+        "matched_terms": [
+          "children",
+          "兒童"
+        ],
+        "category": "inc7sc1",
+        "venue": "粉嶺公共圖書館",
+        "dates": [
+          "2026-10-10",
+          "2026-10-17",
+          "2026-10-24",
+          "2026-10-31"
+        ],
+        "price_text": "未知",
+        "url": "http://www.hkpl.gov.hk/tc/extension-activities/all-events/search?lib_id=1010"
+      },
+      {
+        "event_id": "lcsd:189230",
+        "title": "兒童書籍介紹 － 恐龍來了",
+        "score": 0.3084,
+        "matched_terms": [
+          "children",
+          "兒童"
+        ],
+        "category": "inc7sc8",
+        "venue": "長洲公共圖書館",
+        "dates": [
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05",
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-10",
+          "2026-10-11",
+          "2026-10-12",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16",
+          "2026-10-17",
+          "2026-10-18",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22",
+          "2026-10-23",
+          "2026-10-24",
+          "2026-10-25",
+          "2026-10-26",
+          "2026-10-27",
+          "2026-10-28",
+          "2026-10-29",
+          "2026-10-30",
+          "2026-10-31"
+        ],
+        "price_text": "未知",
+        "url": "http://www.hkpl.gov.hk/tc/extension-activities/all-events/search?lib_id=990"
+      },
+      {
+        "event_id": "lcsd:184372",
+        "title": "葉氏兒童合唱團",
+        "score": 0.2577,
+        "matched_terms": [
+          "children",
+          "兒童"
+        ],
+        "category": "inc4sc14",
+        "venue": "沙田大會堂 (演講室(2))",
+        "dates": [
+          "2026-07-04",
+          "2026-07-11",
+          "2026-07-18",
+          "2026-07-25",
+          "2026-08-01",
+          "2026-08-08",
+          "2026-08-15",
+          "2026-08-22",
+          "2026-09-05",
+          "2026-09-12",
+          "2026-09-19",
+          "2026-09-26",
+          "2026-10-03",
+          "2026-10-10",
+          "2026-10-17",
+          "2026-10-24",
+          "2026-10-31",
+          "2026-11-07",
+          "2026-11-14",
+          "2026-11-21",
+          "2026-11-28",
+          "2026-12-05",
+          "2026-12-12",
+          "2026-12-19"
+        ],
+        "price_text": "未知",
+        "url": ""
+      },
+      {
+        "event_id": "lcsd:189157",
+        "title": "兒童書籍介紹 － 兒童圖書館–球類運動",
+        "score": 0.25,
+        "matched_terms": [
+          "children",
+          "兒童"
+        ],
+        "category": "inc7sc8",
+        "venue": "荃灣公共圖書館",
+        "dates": [
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05",
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-10",
+          "2026-10-11",
+          "2026-10-12",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16",
+          "2026-10-17",
+          "2026-10-18",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22",
+          "2026-10-23",
+          "2026-10-24",
+          "2026-10-25",
+          "2026-10-26",
+          "2026-10-27",
+          "2026-10-28",
+          "2026-10-29",
+          "2026-10-30",
+          "2026-10-31"
+        ],
+        "price_text": "未知",
+        "url": "http://www.hkpl.gov.hk/tc/extension-activities/all-events/search?lib_id=1028"
+      },
+      {
+        "event_id": "lcsd:188917",
+        "title": "兒童書籍介紹 － 藝術‧我也懂",
+        "score": 0.3077,
+        "matched_terms": [
+          "children",
+          "兒童"
+        ],
+        "category": "inc7sc8",
+        "venue": "深水埗公共圖書館",
+        "dates": [
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05",
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-10",
+          "2026-10-11",
+          "2026-10-12",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16",
+          "2026-10-17",
+          "2026-10-18",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22",
+          "2026-10-23",
+          "2026-10-24",
+          "2026-10-25",
+          "2026-10-26",
+          "2026-10-27",
+          "2026-10-28",
+          "2026-10-29",
+          "2026-10-30",
+          "2026-10-31"
+        ],
+        "price_text": "未知",
+        "url": "http://www.hkpl.gov.hk/tc/extension-activities/all-events/search?lib_id=220778"
+      }
+    ],
+    "exhibition 展覽": [
+      {
+        "event_id": "lcsd:186936",
+        "title": "魚之樂 ─ 墨韻生輝",
+        "score": 0.4837,
+        "matched_terms": [
+          "exhibition"
+        ],
+        "category": "inc4sc4",
+        "venue": "香港大會堂 (展覽館)",
+        "dates": [
+          "2026-10-16",
+          "2026-10-17",
+          "2026-10-18",
+          "2026-10-19"
+        ],
+        "price_text": "免費節目",
+        "url": ""
+      },
+      {
+        "event_id": "lcsd:188349",
+        "title": "（瓷器展覽）",
+        "score": 0.467,
+        "matched_terms": [
+          "展覽",
+          "exhibition"
+        ],
+        "category": "inc4sc4",
+        "venue": "香港大會堂 (展覽館)",
+        "dates": [
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-05",
+          "2026-11-06",
+          "2026-11-07",
+          "2026-11-08"
+        ],
+        "price_text": "免費節目",
+        "url": ""
+      },
+      {
+        "event_id": "lcsd:188577",
+        "title": "文物修復辦事處巡迴展覽",
+        "score": 0.3225,
+        "matched_terms": [
+          "exhibition",
+          "展覽"
+        ],
+        "category": "inc4sc4",
+        "venue": "屯門大會堂 (展覽廳)",
+        "dates": [
+          "2026-11-23"
+        ],
+        "price_text": "免費節目",
+        "url": "https://www.lcsd.gov.hk/clpss/tc/search/culture/DetailForm.do?id=188577"
+      },
+      {
+        "event_id": "lcsd:189102",
+        "title": "「香港記憶」簡介展覽",
+        "score": 0.3158,
+        "matched_terms": [
+          "exhibition",
+          "展覽"
+        ],
+        "category": "inc7sc3",
+        "venue": "圓洲角公共圖書館",
+        "dates": [
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05",
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-10",
+          "2026-10-11",
+          "2026-10-12",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16",
+          "2026-10-17",
+          "2026-10-18",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22",
+          "2026-10-23",
+          "2026-10-24",
+          "2026-10-25",
+          "2026-10-26",
+          "2026-10-27",
+          "2026-10-28"
+        ],
+        "price_text": "未知",
+        "url": "http://www.hkpl.gov.hk/tc/extension-activities/all-events/search?lib_id=107337"
+      },
+      {
+        "event_id": "lcsd:188695",
+        "title": "「國家安全教育」書籍展覽",
+        "score": 0.2477,
+        "matched_terms": [
+          "exhibition",
+          "展覽"
+        ],
+        "category": "inc7sc3",
+        "venue": "電氣道公共圖書館",
+        "dates": [
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05",
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-10",
+          "2026-10-11",
+          "2026-10-12",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16",
+          "2026-10-17",
+          "2026-10-18",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22",
+          "2026-10-23",
+          "2026-10-24",
+          "2026-10-25",
+          "2026-10-26",
+          "2026-10-27",
+          "2026-10-28",
+          "2026-10-29",
+          "2026-10-30",
+          "2026-10-31"
+        ],
+        "price_text": "未知",
+        "url": "http://www.hkpl.gov.hk/tc/extension-activities/all-events/search?lib_id=985"
+      }
+    ]
+  }
+}

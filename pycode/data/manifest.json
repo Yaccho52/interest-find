@@ -1,0 +1,96 @@
+{
+  "snapshot_date": "2026-10-19",
+  "source": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+  "files": [
+    {
+      "file": "docs/data_dictionary.pdf",
+      "bytes": 411926,
+      "sha256": "97cad79981216687a90ce926943389836af4d23fd10a856b1aa2130888a5cf7f"
+    },
+    {
+      "file": "processed/audit.json",
+      "bytes": 891,
+      "sha256": "beb926221b8bcdf6e9e95b92464a0f92ba760500a0389c5d94f212faa62abee2"
+    },
+    {
+      "file": "processed/esports_supplements.json",
+      "bytes": 2207,
+      "sha256": "5aa6c0eee0c8d06048d5df92a956417c94f90794c4e22a90ab40b8711191b883"
+    },
+    {
+      "file": "processed/events.csv",
+      "bytes": 1291622,
+      "sha256": "7913f355e18b8545f9f6c8277f27cefc232cb7a34e1a140cbd7f9652a964fa76"
+    },
+    {
+      "file": "processed/sports_events.csv",
+      "bytes": 44965,
+      "sha256": "b0b7ad2d59cf434d0c6604a6a7e8b224b30506e405f8357fd1961dbf5ffde4e8"
+    },
+    {
+      "file": "raw/eventDates.xml",
+      "bytes": 1707509,
+      "sha256": "09fee0b305cc941c632fecd4707fde2f1027f56444cf3f23bc24b8f5f425dc6f"
+    },
+    {
+      "file": "raw/events.xml",
+      "bytes": 1964371,
+      "sha256": "8b8cc223cb95d6f871ad631aef887005b591f9b66d49355c4c07b5f50d6a1878"
+    },
+    {
+      "file": "raw/holiday.xml",
+      "bytes": 53,
+      "sha256": "1d6dc6e6f3d5248fb3695eed12aeceaa90618c2a0b6f735d0c47d8ed73245815"
+    },
+    {
+      "file": "raw/sports/blast_hong_kong_2026.html",
+      "bytes": 398937,
+      "sha256": "05cf77d86ec0c63e7a498726cf94e2c4d43a1f3d36b67c38f8b38e98dca7f411"
+    },
+    {
+      "file": "raw/sports/blast_hong_kong_2026_venue.html",
+      "bytes": 73530,
+      "sha256": "2c4a53545c420d6acec1e5683190525155dd112afa51c2b5c708dd264bb7d350"
+    },
+    {
+      "file": "raw/sports/hkpl_fixtures.html",
+      "bytes": 281744,
+      "sha256": "3a29a1d9fdcd4e2f9869be50b3c542be83037659da43c584d86a838a012b5118"
+    },
+    {
+      "file": "raw/sports/hkpl_fixtures_page2.html",
+      "bytes": 281576,
+      "sha256": "e1cff904733826c043ac0eff6e56121391be8a4ba0216483c663db285b2a5522"
+    },
+    {
+      "file": "raw/sports/hkpl_fixtures_page3.html",
+      "bytes": 265864,
+      "sha256": "80d228aa93992cfde98f1b084d9599b1f178770da99d40f18b31245713309cd5"
+    },
+    {
+      "file": "raw/sports/lck_hong_kong.html",
+      "bytes": 23682,
+      "sha256": "0f44eaa7c75eb9e9da37ca4f22de74b5aea5214b4e75c84a204ab791cd4d234e"
+    },
+    {
+      "file": "raw/sports/m_mark_events.csv",
+      "bytes": 6458,
+      "sha256": "d55b23ed31599c408bcdf1744e9531450908f9cc704c10c8cf411af143f92e55"
+    },
+    {
+      "file": "raw/venues.xml",
+      "bytes": 37250,
+      "sha256": "1ad1098164e5756fac040ce7219855393845c75ebc0c98f3f5ffb87107e1b618"
+    },
+    {
+      "file": "README.md",
+      "bytes": 1732,
+      "sha256": "f3f8bdd052a101df2a444a90ccb70d078b10d4a8bfd957259cb22e1dd866e7c1"
+    },
+    {
+      "file": "SPORTS_SOURCES.md",
+      "bytes": 4063,
+      "sha256": "2cebd4902bd1b725f6ad502c14ed989981f75249746e6033f48272d58e7b956f"
+    }
+  ]
+}

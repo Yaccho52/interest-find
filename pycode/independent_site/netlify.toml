@@ -1,0 +1,3 @@
+# 静态网站已构建完成，不需要在线运行 Python。
+[build]
+  publish = "."

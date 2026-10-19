@@ -1,0 +1,9 @@
+/* ============================================================ */
+/* 第六部分：场次信息、辅助阅读与移动端细节 */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.time-detail{font-size:10px;color:#788176;margin:10px 0 2px}
+.time-detail summary{cursor:pointer;color:#6d8168;line-height:1.7}
+.time-detail p{white-space:pre-line;line-height:1.8;background:#f8faf6;padding:10px;border-radius:8px;max-height:180px;overflow:auto;overflow-wrap:anywhere}
+.session-time{color:#71836d;font-size:11px;margin:6px 0 0 23px;line-height:1.7}
+.sort-label{flex-shrink:0}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
