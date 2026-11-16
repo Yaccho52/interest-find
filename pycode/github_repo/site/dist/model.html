@@ -45,7 +45,7 @@
       <a href="#eval">05 评估</a>
     </nav>
 
-    <section class="step" id="data">
+    <section class="mstep" id="data">
       <div class="step-head">
         <span class="eyebrow">STEP 01 · 数据</span>
         <h2>四个来源，先变成一张能算的表</h2>
@@ -65,7 +65,7 @@
       <p class="step-note">中文描述缺失 84%、票价缺失 54%——这两个数字决定了模型基本只能看标题，也解释了后面为什么用字符片段而不是分词。</p>
     </section>
 
-    <section class="step" id="vector">
+    <section class="mstep" id="vector">
       <div class="step-head">
         <span class="eyebrow">STEP 02 · 文本向量化</span>
         <h2>把一条标题，变成 12,000 维的稀疏向量</h2>
@@ -115,7 +115,7 @@
       <p class="step-note">这一块用 scikit-learn 做过交叉验证：在同样的小语料上，手写实现与它的 IDF 最大差在 10⁻⁸ 量级，说明复现的是同一套公式，而不是「碰巧能跑」。</p>
     </section>
 
-    <section class="step" id="cluster">
+    <section class="mstep" id="cluster">
       <div class="step-head">
         <span class="eyebrow">STEP 03 · 主题结构</span>
         <h2>球面 K-means：把目录拆成八个主题</h2>
@@ -130,7 +130,7 @@
       <p class="step-note">点任一主题可以高亮对应的点。有些簇描述的其实是「命名模板」而不是语义主题——比如 51 条几乎同名的舞蹈训练班——所以这八个簇目前只作为分析层，没有进界面；界面里的 34 条路径是另外手工设计并校验全覆盖的。</p>
     </section>
 
-    <section class="step" id="rank">
+    <section class="mstep" id="rank">
       <div class="step-head">
         <span class="eyebrow">STEP 04 · 排序</span>
         <h2>余弦打分，再用 MMR 去掉重复</h2>
@@ -148,7 +148,7 @@
       <p class="step-note">同一个查询、同一个候选集，只改变 λ：列表内部两两余弦从 <span id="sim-a">0.498</span> 降到 <span id="sim-b">0.218</span>。λ 从 0 扫到 0.5 之后，0.2 是「精度不掉、冗余明显下降」的折中点，这是判断，不是最优解。</p>
     </section>
 
-    <section class="step" id="eval">
+    <section class="mstep" id="eval">
       <div class="step-head">
         <span class="eyebrow">STEP 05 · 评估</span>
         <h2>没有用户数据，就用目录内的检索代理</h2>
