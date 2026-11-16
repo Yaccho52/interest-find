@@ -56,11 +56,12 @@
 .rule span{font-size:12px;color:#748074;line-height:1.95;display:block}
 
 /* ---------- 02 向量 ---------- */
-.formula-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.formula{border:1px solid var(--line);border-radius:16px;padding:18px 20px 16px;background:#fff}
+.formula-grid{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden}
+.formula{padding:20px 24px 18px;text-align:center}
+.formula + .formula{border-top:1px solid #f0f2ec}
 .formula-label{font-size:10.5px;letter-spacing:1.6px;color:#8a9784;display:block}
-.formula code{display:block;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:13px;color:#2f4a3d;margin:12px 0 10px;line-height:1.85;overflow-wrap:anywhere}
-.formula small{font-size:11.5px;color:#8b948a;line-height:1.85;display:block}
+.formula code{display:block;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:14.5px;color:#2f4a3d;margin:10px auto 8px;line-height:1.95;text-align:center;overflow-wrap:anywhere}
+.formula small{font-size:11.5px;color:#8b948a;line-height:1.85;display:block;text-align:center}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
 .token-box{border:1px solid #eef0e8;border-radius:18px;background:var(--warm);padding:18px 22px}
 .token-label{font-size:10.5px;letter-spacing:1.6px;color:#8a9784}
@@ -103,9 +104,9 @@
 .cluster-example::before{content:"例 ";color:#b3bdb0}
 
 /* ---------- 04 排序 ---------- */
-.rank-formula{border:1px solid var(--line);border-radius:16px;background:#fff;padding:18px 22px;margin-bottom:16px}
-.rank-formula code{display:block;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:13px;color:#2f4a3d;line-height:1.9;overflow-wrap:anywhere}
-.rank-formula span{display:block;font-size:11.5px;color:#8b948a;margin-top:8px;line-height:1.8}
+.rank-formula{border:1px solid var(--line);border-radius:16px;background:#fff;padding:20px 24px;margin-bottom:16px;text-align:center}
+.rank-formula code{display:block;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:14.5px;color:#2f4a3d;line-height:1.95;text-align:center;overflow-wrap:anywhere}
+.rank-formula span{display:block;font-size:11.5px;color:#8b948a;margin-top:8px;line-height:1.8;text-align:center}
 .rank-compare{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .rank-col{border:1px solid var(--line);border-radius:20px;background:#fff;padding:18px 22px}
 .rank-col.default{border-color:#c4d6bb;background:#fbfdfa}
@@ -163,7 +164,6 @@
   .flow{grid-template-columns:repeat(3,minmax(0,1fr))}
   .flow li + li::before{display:none}
   .source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .formula-grid{grid-template-columns:1fr}
   .split{grid-template-columns:1fr}
   .matrix-card{grid-template-columns:1fr}
   .cluster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
