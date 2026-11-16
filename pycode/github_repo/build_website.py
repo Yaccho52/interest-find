@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 
-from model_events import OUT, ROOT, Tfidf, np, pd, rank
+from model_events import OUT, ROOT, Tfidf, np, pd, rank, tokens
 
 DEST = ROOT / 'site' / 'dist'
 
@@ -110,6 +110,79 @@ def illustrations():
 
 
 # ============================================================
+# 第三点五部分：导出「模型说明」页需要的投影、主题和指标
+SOURCE_LABELS = {
+    'LCSD': ('康文署文化活动', 'data.gov.hk 开放数据'),
+    'government_open_data': ('Ｍ品牌赛事', 'data.gov.hk 开放数据'),
+    'official_website_extraction': ('港超赛程', '官方网页提取'),
+    'curated_from_official_websites': ('BLAST 香港', '主办方与场馆页面'),
+}
+
+
+def projection_2d(vectors):
+    """用 Gram 矩阵的前两个主成分做二维投影，只用于观察结构，不参与推荐。"""
+    gram = (vectors @ vectors.T).astype(np.float64)
+    mean = gram.mean(axis=0)
+    centered = gram - mean[None, :] - mean[:, None] + gram.mean()
+    values, basis = np.linalg.eigh(centered)
+    order = np.argsort(values)[::-1][:2]
+    coords = basis[:, order] * np.sqrt(np.maximum(values[order], 0.0))
+    for axis in range(2):
+        lowest = coords[:, axis].min()
+        span = float(np.ptp(coords[:, axis]))
+        coords[:, axis] = (coords[:, axis] - lowest) / (span or 1.0)
+    return coords
+
+
+def export_model_page(frame, model, x, path_count):
+    """导出网页绘图用的 JSON；只含结构与指标，不含原始文本或模型权重。"""
+    summary = json.loads((OUT / 'results.json').read_text(encoding='utf-8'))
+    labels = frame['cluster'].astype(int).to_numpy()
+    coords = projection_2d(x)
+
+    sources = []
+    for key, count in summary['sources'].items():
+        label, kind = SOURCE_LABELS.get(key, (key, '其他'))
+        sources.append(dict(label=label, kind=kind, count=int(count)))
+
+    # 同一个查询、同一个候选集，只改变 lambda，用来展示 MMR 的效果。
+    scores = x @ model.transform(['音樂 music'])[0]
+    candidates = np.flatnonzero(scores >= max(0.05, float(scores.max()) * 0.1))
+    groups = frame.title_group.tolist()
+    comparisons = []
+    for lam in (0.0, 0.2):
+        chosen = rank(x, scores, candidates, groups, top_k=5, diversity=lam)
+        block = x[chosen] @ x[chosen].T
+        similarity = float(block[np.triu_indices(len(chosen), 1)].mean()) if len(chosen) > 1 else 0.0
+        comparisons.append({'lambda': lam, 'similarity': round(similarity, 3),
+                            'items': [{'title': frame.iloc[i].title,
+                                       'score': round(float(scores[i]), 3)} for i in chosen]})
+
+    topics = summary['clustering']['topics']
+    payload = dict(
+        snapshot='2026-10-19',
+        total=len(frame),
+        title_groups=int(frame.title_group.nunique()),
+        vocabulary=len(model.vocabulary),
+        nonzero=int((x != 0).sum()),
+        density=round(float((x != 0).sum() / x.size), 4),
+        paths=int(path_count),
+        sources=sources,
+        token_demo={'input': '粵劇折子戲', 'tokens': tokens('粵劇折子戲')},
+        clusters=[{'id': int(topic['cluster']), 'size': int(topic['size']),
+                   'terms': topic['terms'][:6], 'examples': topic['examples'][:2]}
+                  for topic in topics],
+        projection=[[round(float(coords[i, 0]), 4), round(float(coords[i, 1]), 4), int(labels[i])]
+                    for i in range(len(frame))],
+        metrics=summary['evaluation']['methods'],
+        mmr=comparisons,
+    )
+    (DEST / 'model.json').write_text(
+        json.dumps(payload, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    print(f'模型说明数据已导出：{len(topics)} 个主题，{len(comparisons)} 组排序对照。')
+
+
+# ============================================================
 # 第四部分：计算选项对应的推荐排序并导出网页数据
 def main():
     """页面只处理点击、日期筛选和展示，推荐向量与排序由 Python 预先计算。"""
@@ -145,6 +218,7 @@ def main():
                       | dict(image=f'assets/{image}.svg', image_kind='主题插画', session_time=session_time))
     payload = dict(snapshot='2026-10-19', total=len(public), tree=tree, events=public, rankings=rankings)
     (DEST / 'data.json').write_text(json.dumps(payload, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    export_model_page(frame, model, x, len(rankings))
     illustrations()
     print(f'网站已导出：{len(public)} 条活动，{len(rankings)} 条兴趣路径。')
 

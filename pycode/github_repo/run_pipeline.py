@@ -81,7 +81,7 @@ def main():
             print('错误日志：' + str(log_path), flush=True)
             return 1
     print('\n执行成功。日志：' + str(log_path), flush=True)
-    print('网站请联网访问：请参阅 CLOUDFLARE_PAGES.md 配置独立网站地址', flush=True)
+    print('网站请联网访问：https://interest-find1.pages.dev', flush=True)
     print('本次操作只运行源码，不启动本地网站，也不自动修改线上版本。', flush=True)
     return 0
 

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="拾趣香港的推荐模型说明：数据清洗、TF-IDF 向量化、球面 K-means 主题聚类、MMR 排序与评估。">
+  <title>推荐是怎么算出来的 · 拾趣香港</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="refinements.css">
+  <link rel="stylesheet" href="model.css">
+  <script src="model.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <a href="./" class="brand" aria-label="拾趣香港首页"><span class="brand-mark">✳</span><span>拾趣<span class="brand-light">香港</span><small>HONG KONG, YOUR WAY</small></span></a>
+    <div class="header-right"><span class="live-dot"></span>模型说明<a class="about-button" href="./">返回首页 ↗</a></div>
+  </header>
+
+  <main class="model-main">
+    <section class="model-hero">
+      <span class="kicker">✧ UNDER THE HOOD</span>
+      <h1>一次点击背后，<em>发生了什么</em></h1>
+      <p>从 1,231 条活动，到 34 条兴趣路径上的一列卡片。这里把中间的四步摊开给你看：数据怎么来、文本怎么变成向量、主题怎么聚出来、结果怎么排。</p>
+      <div class="model-facts" id="facts" aria-label="模型关键数字"></div>
+      <p class="gentle-note">全部结果由项目中的 Python 代码离线计算，网页只负责展示。</p>
+      <noscript><p class="step-note">这个页面用 JavaScript 绘制图表；禁用脚本时只能看到文字说明，模型的计算结果仍记录在项目报告中。</p></noscript>
+    </section>
+
+    <nav class="model-nav" aria-label="章节导航">
+      <a href="#data">01 数据</a>
+      <a href="#vector">02 向量</a>
+      <a href="#cluster">03 主题</a>
+      <a href="#rank">04 排序</a>
+      <a href="#eval">05 评估</a>
+    </nav>
+
+    <section class="step" id="data">
+      <div class="step-head">
+        <span class="eyebrow">STEP 01 · 数据</span>
+        <h2>四个来源，一张表</h2>
+        <p class="step-lead">两个来自 data.gov.hk，一个来自足总官网，一个来自主办方页面。清洗之后合成 1,231 条统一记录——同一套编号、日期和场地方言。</p>
+      </div>
+      <div class="source-grid" id="sources"></div>
+      <div class="clean-rules">
+        <div class="rule"><b>去重</b><span>按标点无关的标题键合并，1,231 条并为 893 个标题组</span></div>
+        <div class="rule"><b>日期</b><span>2099 占位符剔除并标记；单日活动展开成逐日列表</span></div>
+        <div class="rule"><b>不补数据</b><span>票价、描述缺失就留白，不用生成内容填满</span></div>
+      </div>
+      <p class="step-note">中文描述缺失 84%、票价缺失 54%。这是后面所有方法的约束，也是「模型只能看标题」的原因。</p>
+    </section>
+
+    <section class="step" id="vector">
+      <div class="step-head">
+        <span class="eyebrow">STEP 02 · 文本向量化</span>
+        <h2>把标题变成 12,000 维的稀疏向量</h2>
+        <p class="step-lead">中文没有空格，所以切成两字、三字的片段；英文按词切。每个片段按「词频 × 逆文档频率」加权，再把整条记录缩放到单位长度。</p>
+      </div>
+      <div class="formula-grid">
+        <div class="formula"><span class="formula-label">词频</span><code>tf(t,d) = 1 + ln c(t,d)</code><small>出现十次不等于重要十倍</small></div>
+        <div class="formula"><span class="formula-label">逆文档频率</span><code>idf(t) = ln((1+N)/(1+df(t))) + 1</code><small>加一是平滑，每篇都有的词也不归零</small></div>
+        <div class="formula"><span class="formula-label">相似度</span><code>cos(x,y) = x · y</code><small>L2 归一化后，点积就是夹角余弦</small></div>
+      </div>
+      <div class="token-box">
+        <span class="token-label">切分示例</span>
+        <div class="token-line"><span class="token-input" id="token-input">粵劇折子戲</span><span class="token-arrow">→</span><span class="token-list" id="tokens"></span></div>
+      </div>
+      <div class="matrix-card">
+        <div class="matrix-copy">
+          <b>矩阵有多稀疏</b>
+          <p>1,231 条记录 × 12,000 个词，理论上有 1,477 万个格子；实际只有 <span id="nonzero">5.4 万</span> 个非零，占 <span id="density">0.37%</span>。</p>
+          <p class="matrix-hint">下面是小比例示意：亮色格子代表有值的词。</p>
+        </div>
+        <div class="matrix" id="matrix" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="step" id="cluster">
+      <div class="step-head">
+        <span class="eyebrow">STEP 03 · 主题结构</span>
+        <h2>球面 K-means：把目录拆成八个主题</h2>
+        <p class="step-lead">向量都落在单位球面上，所以用球面版本：每个点到最近中心的余弦平均值最大，中心由「成员向量求和再归一化」得到。跑三次不同初始化，取最好的一次。</p>
+      </div>
+      <div class="cluster-layout">
+        <div class="scatter-card">
+          <div class="legend" id="legend" aria-label="主题颜色图例"></div>
+          <svg id="scatter" viewBox="0 0 820 470" role="img" aria-label="1,231 条活动的二维投影散点图，按八个主题着色"></svg>
+          <p class="scatter-caption">二维投影（PCA）· 每个点是一条活动 · 仅用于观察结构，不参与推荐</p>
+        </div>
+        <div class="cluster-side">
+          <div class="cluster-head"><span class="eyebrow">八个主题</span><button class="cluster-reset" id="cluster-reset" type="button">显示全部</button></div>
+          <div class="cluster-list" id="clusters"></div>
+        </div>
+      </div>
+      <p class="step-note">点击左侧任一主题可以高亮对应的点。有些簇描述的是「命名模板」而不是语义主题（比如舞蹈训练班），所以它们目前只作为分析层，没有进界面。</p>
+    </section>
+
+    <section class="step" id="rank">
+      <div class="step-head">
+        <span class="eyebrow">STEP 04 · 排序</span>
+        <h2>余弦打分，再用 MMR 去掉重复</h2>
+        <p class="step-lead">兴趣向量由「输入的文字」和「点过的活动」平均得到，分数就是余弦。只按分数排，前五条往往是五个几乎一样的节目，所以再按相似度惩罚一次。</p>
+      </div>
+      <div class="rank-formula">
+        <code>MMR = arg max (1 − λ) · 相关度 − λ · max cos(候选, 已选)</code>
+        <span>λ = 0 只看相关；λ = 1 只看新颖；产品用 0.2。</span>
+      </div>
+      <div class="rank-compare" id="rank"></div>
+      <p class="step-note">同一个查询、同一个候选集，只改变 λ。列表内部两两余弦从 <span id="sim-a">0.498</span> 降到 <span id="sim-b">0.218</span>，重复度明显下降。</p>
+    </section>
+
+    <section class="step" id="eval">
+      <div class="step-head">
+        <span class="eyebrow">STEP 05 · 评估</span>
+        <h2>用目录内的检索代理来检验</h2>
+        <p class="step-lead">目录里没有用户评分和点击，做不了监督学习。所以从记录数不少于 10 的类别中抽 100 个标题当查询，排除同标题组，看返回的五条里有多少条同类别。</p>
+      </div>
+      <div class="metric-rows" id="metrics"></div>
+      <div class="eval-note">
+        <b>怎么读这组数字</b>
+        <p>TF-IDF 在同类 P@5 上并没有赢过关键词基线（0.610 对 0.634）：这个代理指标奖励「同类别」，而关键词基线在标题字面重复时几乎必中。模型赢在覆盖率（0.216 → 0.262）和列表多样性（0.383 → 0.333）——对一个帮人「发现」的产品，这两项更贴近任务。</p>
+      </div>
+      <p class="step-note">这是目录内的代理指标，不是用户满意度，也不能当未来泛化准确率。</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="footer-brand">✳ 拾趣香港</span>
+    <span>让下一次出门，从一点兴趣开始。</span>
+    <a href="./">返回首页 ↗</a>
+  </footer>
+</body>
+</html>
