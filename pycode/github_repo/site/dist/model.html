@@ -21,10 +21,20 @@
     <section class="model-hero">
       <span class="kicker">✧ UNDER THE HOOD</span>
       <h1>一次点击背后，<em>发生了什么</em></h1>
-      <p>从 1,231 条活动，到 34 条兴趣路径上的一列卡片。这里把中间的四步摊开给你看：数据怎么来、文本怎么变成向量、主题怎么聚出来、结果怎么排。</p>
+      <p>从这个目录里的 1,231 条活动，到 34 条兴趣路径上的一列卡片。这一页把中间的五步摊开：数据怎么统一、文字怎么变成向量、主题怎么聚出来、结果怎么排序、最后怎么检验。</p>
       <div class="model-facts" id="facts" aria-label="模型关键数字"></div>
-      <p class="gentle-note">全部结果由项目中的 Python 代码离线计算，网页只负责展示。</p>
-      <noscript><p class="step-note">这个页面用 JavaScript 绘制图表；禁用脚本时只能看到文字说明，模型的计算结果仍记录在项目报告中。</p></noscript>
+      <p class="gentle-note">全部结果由项目里的 Python 代码离线计算，网页只负责展示。</p>
+      <noscript><p class="step-note">这个页面用 JavaScript 绘制图表；禁用脚本时只能看到文字说明。</p></noscript>
+    </section>
+
+    <section class="pipeline" aria-label="处理流程总览">
+      <ol class="flow">
+        <li><span class="flow-num">01</span><b>统一目录</b><small>四个来源合成一张表</small></li>
+        <li><span class="flow-num">02</span><b>文本向量</b><small>TF-IDF，12,000 维</small></li>
+        <li><span class="flow-num">03</span><b>主题聚类</b><small>球面 K-means，8 个主题</small></li>
+        <li><span class="flow-num">04</span><b>排序</b><small>余弦 + MMR 去重</small></li>
+        <li><span class="flow-num">05</span><b>评估</b><small>目录内检索代理</small></li>
+      </ol>
     </section>
 
     <nav class="model-nav" aria-label="章节导航">
@@ -38,89 +48,131 @@
     <section class="step" id="data">
       <div class="step-head">
         <span class="eyebrow">STEP 01 · 数据</span>
-        <h2>四个来源，一张表</h2>
-        <p class="step-lead">两个来自 data.gov.hk，一个来自足总官网，一个来自主办方页面。清洗之后合成 1,231 条统一记录——同一套编号、日期和场地方言。</p>
+        <h2>四个来源，先变成一张能算的表</h2>
+        <p class="step-lead">两个来源是 data.gov.hk 的开放数据，一个是香港足总官网的赛程，一个是 BLAST 的主办方页面。它们的字段名、日期格式和类别体系都不一样，所以第一步不是建模，而是统一：同一套编号、同一种日期、同一个标题键。</p>
       </div>
       <div class="source-grid" id="sources"></div>
-      <div class="clean-rules">
-        <div class="rule"><b>去重</b><span>按标点无关的标题键合并，1,231 条并为 893 个标题组</span></div>
-        <div class="rule"><b>日期</b><span>2099 占位符剔除并标记；单日活动展开成逐日列表</span></div>
-        <div class="rule"><b>不补数据</b><span>票价、描述缺失就留白，不用生成内容填满</span></div>
+      <div class="composition-card">
+        <div class="composition-head"><b>目录构成</b><span id="composition-total"></span></div>
+        <div class="composition-bar" id="composition" aria-hidden="true"></div>
+        <ul class="composition-legend" id="composition-legend"></ul>
       </div>
-      <p class="step-note">中文描述缺失 84%、票价缺失 54%。这是后面所有方法的约束，也是「模型只能看标题」的原因。</p>
+      <div class="clean-rules">
+        <div class="rule"><b>去重：按标题键合并</b><span>去掉标点空格后比较，「（音樂會）」和「(音樂會)」算同一组；1,231 条记录归并成 893 个标题组，推荐列表和评估都靠它去重。</span></div>
+        <div class="rule"><b>日期：只保留可信的</b><span>一条活动的日期可以是多天，展开成逐日列表；2090 年以后的日期视为占位符剔除并标记，避免它永远出现在「未来活动」里。</span></div>
+        <div class="rule"><b>缺失：不编造</b><span>票价缺失就显示「未知」，描述缺失就留空；不用生成内容把数据「补全」，因为那会破坏每一条记录的来源。</span></div>
+      </div>
+      <p class="step-note">中文描述缺失 84%、票价缺失 54%——这两个数字决定了模型基本只能看标题，也解释了后面为什么用字符片段而不是分词。</p>
     </section>
 
     <section class="step" id="vector">
       <div class="step-head">
         <span class="eyebrow">STEP 02 · 文本向量化</span>
-        <h2>把标题变成 12,000 维的稀疏向量</h2>
-        <p class="step-lead">中文没有空格，所以切成两字、三字的片段；英文按词切。每个片段按「词频 × 逆文档频率」加权，再把整条记录缩放到单位长度。</p>
+        <h2>把一条标题，变成 12,000 维的稀疏向量</h2>
+        <p class="step-lead">中文没有空格，所以把每段汉字切成两字、三字的片段；英文按词切。每个片段按「词频 × 逆文档频率」加权，再把整条记录缩放到单位长度——这样两条记录越相近，向量的夹角越小。</p>
       </div>
       <div class="formula-grid">
-        <div class="formula"><span class="formula-label">词频</span><code>tf(t,d) = 1 + ln c(t,d)</code><small>出现十次不等于重要十倍</small></div>
-        <div class="formula"><span class="formula-label">逆文档频率</span><code>idf(t) = ln((1+N)/(1+df(t))) + 1</code><small>加一是平滑，每篇都有的词也不归零</small></div>
-        <div class="formula"><span class="formula-label">相似度</span><code>cos(x,y) = x · y</code><small>L2 归一化后，点积就是夹角余弦</small></div>
+        <div class="formula"><span class="formula-label">词频 TF</span><code>tf(t,d) = 1 + ln c(t,d)</code><small>取对数：出现十次不等于重要十倍。</small></div>
+        <div class="formula"><span class="formula-label">逆文档频率 IDF</span><code>idf(t) = ln((1+N)/(1+df(t))) + 1</code><small>加一平滑：每篇都出现的词权重是 1，不会被归零。</small></div>
+        <div class="formula"><span class="formula-label">余弦相似度</span><code>cos(x,y) = x · y</code><small>L2 归一化之后，点积就是夹角余弦。</small></div>
       </div>
-      <div class="token-box">
-        <span class="token-label">切分示例</span>
-        <div class="token-line"><span class="token-input" id="token-input">粵劇折子戲</span><span class="token-arrow">→</span><span class="token-list" id="tokens"></span></div>
+      <div class="split">
+        <div class="token-box">
+          <span class="token-label">切分示例</span>
+          <div class="token-line"><span class="token-input" id="token-input">粵劇折子戲</span><span class="token-arrow">→</span></div>
+          <div class="token-list" id="tokens"></div>
+          <p class="token-note">没有词典，也能切；代价是「音樂」会出现在「音樂劇」里，属于已知的假匹配。</p>
+        </div>
+        <figure class="cosine-card">
+          <svg viewBox="0 0 360 230" role="img" aria-label="两个单位向量的夹角示意">
+            <defs>
+              <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 z" fill="#4a6354"></path>
+              </marker>
+            </defs>
+            <line x1="40" y1="190" x2="330" y2="190" stroke="#e3e9df" stroke-width="1"></line>
+            <line x1="40" y1="190" x2="40" y2="40" stroke="#e3e9df" stroke-width="1"></line>
+            <line x1="40" y1="190" x2="168" y2="92" stroke="#345c4b" stroke-width="2.2" marker-end="url(#arrowhead)"></line>
+            <line x1="40" y1="190" x2="286" y2="118" stroke="#6e8a61" stroke-width="2.2" marker-end="url(#arrowhead)"></line>
+            <path d="M 88 190 A 48 48 0 0 0 76 152" fill="none" stroke="#a3b18a" stroke-width="1.6"></path>
+            <text x="96" y="176" font-size="13" fill="#6f7b71">θ</text>
+            <text x="176" y="86" font-size="12" fill="#345c4b">活动 A</text>
+            <text x="292" y="112" font-size="12" fill="#6e8a61">活动 B</text>
+            <text x="40" y="215" font-size="12" fill="#8a9385">夹角越小 → 余弦越大 → 越相似</text>
+          </svg>
+          <figcaption>维度再高，比较的也只是夹角。归一化把长度的影响去掉，只留下「方向」。</figcaption>
+        </figure>
       </div>
       <div class="matrix-card">
         <div class="matrix-copy">
           <b>矩阵有多稀疏</b>
           <p>1,231 条记录 × 12,000 个词，理论上有 1,477 万个格子；实际只有 <span id="nonzero">5.4 万</span> 个非零，占 <span id="density">0.37%</span>。</p>
-          <p class="matrix-hint">下面是小比例示意：亮色格子代表有值的词。</p>
+          <p>稀疏意味着一次检索就是一次稀疏矩阵乘法，整份目录的向量只占几 MB，浏览器和笔记本都能轻松跑。</p>
+          <p class="matrix-hint">下面是小比例示意，亮色格子代表有值的词。</p>
         </div>
         <div class="matrix" id="matrix" aria-hidden="true"></div>
       </div>
+      <p class="step-note">这一块用 scikit-learn 做过交叉验证：在同样的小语料上，手写实现与它的 IDF 最大差在 10⁻⁸ 量级，说明复现的是同一套公式，而不是「碰巧能跑」。</p>
     </section>
 
     <section class="step" id="cluster">
       <div class="step-head">
         <span class="eyebrow">STEP 03 · 主题结构</span>
         <h2>球面 K-means：把目录拆成八个主题</h2>
-        <p class="step-lead">向量都落在单位球面上，所以用球面版本：每个点到最近中心的余弦平均值最大，中心由「成员向量求和再归一化」得到。跑三次不同初始化，取最好的一次。</p>
+        <p class="step-lead">向量都被拉到了单位球面上，所以普通 K-means 的「欧氏平均」会把中心拖出球面。这里用球面版本：目标函数是每个点到最近中心的余弦平均值最大；固定簇之后，最优中心就是「成员向量求和再归一化」——这是柯西不等式直接给出的结论。初始化用余弦版 k-means++，并且跑三次不同种子取最好的一次。</p>
       </div>
-      <div class="cluster-layout">
-        <div class="scatter-card">
-          <div class="legend" id="legend" aria-label="主题颜色图例"></div>
-          <svg id="scatter" viewBox="0 0 820 470" role="img" aria-label="1,231 条活动的二维投影散点图，按八个主题着色"></svg>
-          <p class="scatter-caption">二维投影（PCA）· 每个点是一条活动 · 仅用于观察结构，不参与推荐</p>
-        </div>
-        <div class="cluster-side">
-          <div class="cluster-head"><span class="eyebrow">八个主题</span><button class="cluster-reset" id="cluster-reset" type="button">显示全部</button></div>
-          <div class="cluster-list" id="clusters"></div>
-        </div>
+      <div class="scatter-card">
+        <div class="legend" id="legend" aria-label="主题颜色图例"></div>
+        <svg id="scatter" viewBox="0 0 1160 540" role="img" aria-label="1,231 条活动的二维投影散点图，按八个主题着色"></svg>
+        <p class="scatter-caption">二维投影（PCA）· 每个点是一条活动 · 仅用于观察结构，不参与推荐</p>
       </div>
-      <p class="step-note">点击左侧任一主题可以高亮对应的点。有些簇描述的是「命名模板」而不是语义主题（比如舞蹈训练班），所以它们目前只作为分析层，没有进界面。</p>
+      <div class="cluster-grid" id="clusters"></div>
+      <p class="step-note">点任一主题可以高亮对应的点。有些簇描述的其实是「命名模板」而不是语义主题——比如 51 条几乎同名的舞蹈训练班——所以这八个簇目前只作为分析层，没有进界面；界面里的 34 条路径是另外手工设计并校验全覆盖的。</p>
     </section>
 
     <section class="step" id="rank">
       <div class="step-head">
         <span class="eyebrow">STEP 04 · 排序</span>
         <h2>余弦打分，再用 MMR 去掉重复</h2>
-        <p class="step-lead">兴趣向量由「输入的文字」和「点过的活动」平均得到，分数就是余弦。只按分数排，前五条往往是五个几乎一样的节目，所以再按相似度惩罚一次。</p>
+        <p class="step-lead">用户的兴趣变成一个向量：输入文字的向量，加上点过的活动的平均向量，再归一化。分数就是余弦。如果只按分数排，前五条往往是五个几乎一样的节目，所以还要按「和已选内容有多像」惩罚一次。</p>
       </div>
       <div class="rank-formula">
-        <code>MMR = arg max (1 − λ) · 相关度 − λ · max cos(候选, 已选)</code>
-        <span>λ = 0 只看相关；λ = 1 只看新颖；产品用 0.2。</span>
+        <code>MMR = arg max [(1 − λ) · 相关度 − λ · max cos(候选, 已选)]</code>
+        <span>λ = 0 只看相关；λ = 1 只看新颖；产品取 0.2。</span>
       </div>
       <div class="rank-compare" id="rank"></div>
-      <p class="step-note">同一个查询、同一个候选集，只改变 λ。列表内部两两余弦从 <span id="sim-a">0.498</span> 降到 <span id="sim-b">0.218</span>，重复度明显下降。</p>
+      <div class="sim-card">
+        <div class="sim-head"><b>列表内部平均相似度</b><span>越低表示越不重复</span></div>
+        <div class="sim-bars" id="simbars"></div>
+      </div>
+      <p class="step-note">同一个查询、同一个候选集，只改变 λ：列表内部两两余弦从 <span id="sim-a">0.498</span> 降到 <span id="sim-b">0.218</span>。λ 从 0 扫到 0.5 之后，0.2 是「精度不掉、冗余明显下降」的折中点，这是判断，不是最优解。</p>
     </section>
 
     <section class="step" id="eval">
       <div class="step-head">
         <span class="eyebrow">STEP 05 · 评估</span>
-        <h2>用目录内的检索代理来检验</h2>
-        <p class="step-lead">目录里没有用户评分和点击，做不了监督学习。所以从记录数不少于 10 的类别中抽 100 个标题当查询，排除同标题组，看返回的五条里有多少条同类别。</p>
+        <h2>没有用户数据，就用目录内的检索代理</h2>
+        <p class="step-lead">目录里没有评分、没有点击、没有购票记录，所以做不了监督学习。退一步的做法是：从记录数不少于 10 的类别里抽 100 个标题当查询，候选集排除同一个标题组，看返回的五条里有多少条与查询同类。</p>
       </div>
       <div class="metric-rows" id="metrics"></div>
       <div class="eval-note">
         <b>怎么读这组数字</b>
-        <p>TF-IDF 在同类 P@5 上并没有赢过关键词基线（0.610 对 0.634）：这个代理指标奖励「同类别」，而关键词基线在标题字面重复时几乎必中。模型赢在覆盖率（0.216 → 0.262）和列表多样性（0.383 → 0.333）——对一个帮人「发现」的产品，这两项更贴近任务。</p>
+        <p>TF-IDF 在同类 P@5 上并没有赢过关键词基线（0.610 对 0.634）：这个代理指标奖励「同类别」，而关键词基线在标题字面重复时几乎必中。模型赢在覆盖率（0.216 → 0.262）和列表多样性（0.383 → 0.333）——对一个帮人「发现」的产品，这两项更贴近任务；如果任务是精确找那一个东西，关键词反而是对的。</p>
       </div>
-      <p class="step-note">这是目录内的代理指标，不是用户满意度，也不能当未来泛化准确率。</p>
+      <p class="step-note">P@5 的分母固定是 5：只返回一条时也只算 0.2 分，避免「少返回就高分」。但这终究是代理指标，不代表用户满意度，也不能当作未来泛化的准确率。</p>
+    </section>
+
+    <section class="closing">
+      <div class="closing-copy">
+        <span class="eyebrow">FROM MODEL TO PAGE</span>
+        <h2>这些数字，最后变成了这样一个页面</h2>
+        <p>模型离线算好 34 条兴趣路径的排序，导出成一个约 1 MB 的 <code>data.json</code>；网页只负责点击、筛选和展示。所以推荐结果可审计、线上零计算，也不会出现「前后端算出两套答案」。</p>
+        <p>下面这张截图来自 2026 年 10 月的线上版本。</p>
+      </div>
+      <figure class="shot">
+        <img src="assets/homepage.jpg" alt="拾趣香港首页截图：三个兴趣大方向与活动数量" loading="lazy" width="1264" height="1032">
+        <figcaption>首页：三个方向、1,103 / 126 / 2 条记录，无需登录。</figcaption>
+      </figure>
     </section>
   </main>
 

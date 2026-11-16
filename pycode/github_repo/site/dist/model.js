@@ -2,6 +2,7 @@
 /* 模型说明页：读取 model.json，渲染图示与交互 */
 (() => {
   const COLORS = ['#345c4b', '#6e8a61', '#93a86f', '#c2a878', '#b08968', '#a9768e', '#6c6aa8', '#7c9aa6'];
+  const SOURCE_COLORS = ['#345c4b', '#6e8a61', '#b08968', '#c2a878'];
   const METHOD_LABELS = { keyword: '关键词基线', tfidf: 'TF-IDF', tfidf_mmr: 'TF-IDF + MMR' };
   const METHOD_COLORS = { keyword: '#c2a878', tfidf: '#6e8a61', tfidf_mmr: '#345c4b' };
   const METRICS = [
@@ -17,7 +18,6 @@
     if (text !== undefined) node.textContent = text;
     return node;
   };
-
   const color = (cluster) => COLORS[cluster % COLORS.length];
 
   function renderFacts(data) {
@@ -37,7 +37,8 @@
 
   function renderSources(data) {
     const host = $('#sources');
-    data.sources.slice().sort((a, b) => b.count - a.count).forEach((source) => {
+    const ordered = data.sources.slice().sort((a, b) => b.count - a.count);
+    ordered.forEach((source) => {
       const card = el('div', 'source-card');
       card.append(el('b', '', source.label));
       const count = el('div', 'src-count', source.count.toLocaleString());
@@ -45,6 +46,24 @@
       card.append(count, el('span', 'src-kind', source.kind));
       host.append(card);
     });
+
+    const bar = $('#composition');
+    const legend = $('#composition-legend');
+    const total = ordered.reduce((sum, item) => sum + item.count, 0);
+    ordered.forEach((source, index) => {
+      const segment = el('i');
+      segment.style.width = `${(source.count / total) * 100}%`;
+      segment.style.background = SOURCE_COLORS[index % SOURCE_COLORS.length];
+      segment.title = `${source.label} ${source.count}`;
+      bar.append(segment);
+
+      const item = el('li');
+      const dot = el('span', 'dot');
+      dot.style.background = SOURCE_COLORS[index % SOURCE_COLORS.length];
+      item.append(dot, document.createTextNode(`${source.label} · ${source.count.toLocaleString()} 条`));
+      legend.append(item);
+    });
+    $('#composition-total').textContent = `共 ${total.toLocaleString()} 条`;
   }
 
   function renderTokens(data) {
@@ -63,38 +82,6 @@
     }
   }
 
-  function renderClusters(data) {
-    const host = $('#clusters');
-    const legend = $('#legend');
-    data.clusters.forEach((cluster) => {
-      const card = el('button', 'cluster-card');
-      card.type = 'button';
-      card.dataset.cluster = String(cluster.id);
-      card.title = cluster.examples.join(' / ');
-      const dot = el('span', 'cluster-dot');
-      dot.style.background = color(cluster.id);
-      const body = el('span');
-      body.append(
-        el('span', 'cluster-name', `主题 ${cluster.id}`),
-        el('span', 'cluster-terms', cluster.terms.slice(0, 3).join(' · ')),
-      );
-      card.append(dot, body, el('span', 'cluster-size', String(cluster.size)));
-      card.addEventListener('click', () => toggleCluster(cluster.id));
-      host.append(card);
-
-      if (legend) {
-        const chip = el('button', 'legend-chip');
-        chip.type = 'button';
-        chip.dataset.cluster = String(cluster.id);
-        const swatch = el('span', 'cluster-dot');
-        swatch.style.background = color(cluster.id);
-        chip.append(swatch, document.createTextNode(`主题 ${cluster.id}`));
-        chip.addEventListener('click', () => toggleCluster(cluster.id));
-        legend.append(chip);
-      }
-    });
-  }
-
   let activeCluster = null;
 
   function toggleCluster(cluster) {
@@ -105,27 +92,56 @@
     document.querySelectorAll('.legend-chip').forEach((chip) => {
       chip.classList.toggle('active', Number(chip.dataset.cluster) === activeCluster);
     });
-    const svg = $('#scatter');
-    svg.querySelectorAll('circle').forEach((point) => {
+    document.querySelectorAll('#scatter circle').forEach((point) => {
       const match = activeCluster === null || Number(point.dataset.cluster) === activeCluster;
       point.setAttribute('opacity', match ? '0.86' : '0.08');
-      point.setAttribute('r', match && activeCluster !== null ? '4.4' : '3.1');
+      point.setAttribute('r', match && activeCluster !== null ? '4.6' : '3.2');
+    });
+  }
+
+  function renderClusters(data) {
+    const legend = $('#legend');
+    const host = $('#clusters');
+    data.clusters.forEach((cluster) => {
+      const chip = el('button', 'legend-chip');
+      chip.type = 'button';
+      chip.dataset.cluster = String(cluster.id);
+      const swatch = el('span', 'cluster-dot');
+      swatch.style.background = color(cluster.id);
+      chip.append(swatch, document.createTextNode(`主题 ${cluster.id}`));
+      chip.addEventListener('click', () => toggleCluster(cluster.id));
+      legend.append(chip);
+
+      const card = el('button', 'cluster-card');
+      card.type = 'button';
+      card.dataset.cluster = String(cluster.id);
+      const header = el('header');
+      const dot = el('span', 'cluster-dot');
+      dot.style.background = color(cluster.id);
+      header.append(dot, el('span', 'cluster-name', `主题 ${cluster.id}`),
+                    el('span', 'cluster-size', `${cluster.size} 条`));
+      card.append(
+        header,
+        el('p', 'cluster-terms', cluster.terms.slice(0, 4).join(' · ')),
+        el('p', 'cluster-example', cluster.examples[0] || '—'),
+      );
+      card.title = cluster.examples.join(' / ');
+      card.addEventListener('click', () => toggleCluster(cluster.id));
+      host.append(card);
     });
   }
 
   function renderScatter(data) {
     const svg = $('#scatter');
-    const width = 820;
-    const height = 470;
-    const pad = 28;
-    const points = data.projection;
-    const radius = 3.1;
+    const width = 1160;
+    const height = 540;
+    const pad = 42;
     const fragment = document.createDocumentFragment();
-    points.forEach(([x, y, cluster]) => {
+    data.projection.forEach(([x, y, cluster]) => {
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', (pad + x * (width - pad * 2)).toFixed(1));
       circle.setAttribute('cy', (pad + (1 - y) * (height - pad * 2)).toFixed(1));
-      circle.setAttribute('r', String(radius));
+      circle.setAttribute('r', '3.2');
       circle.setAttribute('fill', color(cluster));
       circle.setAttribute('opacity', '0.72');
       circle.dataset.cluster = String(cluster);
@@ -136,8 +152,7 @@
 
   function renderRank(data) {
     const host = $('#rank');
-    const lists = data.mmr;
-    lists.forEach((list, index) => {
+    data.mmr.forEach((list, index) => {
       const column = el('div', 'rank-col' + (index === 1 ? ' default' : ''));
       const header = el('header');
       header.append(
@@ -157,10 +172,24 @@
       column.append(header, ordered);
       host.append(column);
     });
-    if (lists.length === 2) {
-      $('#sim-a').textContent = lists[0].similarity.toFixed(3);
-      $('#sim-b').textContent = lists[1].similarity.toFixed(3);
+    if (data.mmr.length === 2) {
+      $('#sim-a').textContent = data.mmr[0].similarity.toFixed(3);
+      $('#sim-b').textContent = data.mmr[1].similarity.toFixed(3);
     }
+
+    const bars = $('#simbars');
+    const scale = 0.55;
+    data.mmr.forEach((list, index) => {
+      const row = el('div', 'sim-row');
+      row.append(el('label', '', index === 1 ? 'λ = 0.2' : 'λ = 0'));
+      const track = el('div', 'sim-track');
+      const fill = el('div', 'sim-fill');
+      fill.style.width = `${Math.min((list.similarity / scale) * 100, 100)}%`;
+      fill.style.background = index === 1 ? '#345c4b' : '#c2a878';
+      track.append(fill);
+      row.append(track, el('output', '', list.similarity.toFixed(3)));
+      bars.append(row);
+    });
   }
 
   function renderMetrics(data) {
@@ -180,8 +209,7 @@
         fill.style.width = `${Math.max((value / max) * 100, 2)}%`;
         fill.style.background = METHOD_COLORS[method] || '#93a86f';
         track.append(fill);
-        const output = el('output', '', value.toFixed(3));
-        row.append(track, output);
+        row.append(track, el('output', '', value.toFixed(3)));
         bars.append(row);
       });
       card.append(head, bars);
@@ -191,9 +219,6 @@
 
   async function start() {
     renderMatrix();
-    $('#cluster-reset').addEventListener('click', () => {
-      if (activeCluster !== null) toggleCluster(activeCluster);
-    });
     try {
       const response = await fetch('model.json');
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
