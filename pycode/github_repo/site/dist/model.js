@@ -3,13 +3,16 @@
 (() => {
   const COLORS = ['#345c4b', '#6e8a61', '#93a86f', '#c2a878', '#b08968', '#a9768e', '#6c6aa8', '#7c9aa6'];
   const SOURCE_COLORS = ['#345c4b', '#6e8a61', '#b08968', '#c2a878'];
-  const METHOD_LABELS = { keyword: '关键词基线', tfidf: 'TF-IDF', tfidf_mmr: 'TF-IDF + MMR' };
+  const METHOD_LABELS = { keyword: L('关键词基线', 'Keyword baseline'), tfidf: 'TF-IDF', tfidf_mmr: 'TF-IDF + MMR' };
   const METHOD_COLORS = { keyword: '#c2a878', tfidf: '#6e8a61', tfidf_mmr: '#345c4b' };
   const METRICS = [
-    { key: 'category_precision_at_5', label: '同类 P@5', hint: '越高越好' },
-    { key: 'catalog_coverage', label: '目录覆盖率', hint: '越高越好' },
-    { key: 'mean_intra_list_similarity', label: '列表内相似度', hint: '越低越不重复' },
+    { key: 'category_precision_at_5', label: L('同类 P@5', 'Category P@5'), hint: L('越高越好', 'higher is better') },
+    { key: 'catalog_coverage', label: L('目录覆盖率', 'Catalogue coverage'), hint: L('越高越好', 'higher is better') },
+    { key: 'mean_intra_list_similarity', label: L('列表内相似度', 'Intra-list similarity'), hint: L('越低越不重复', 'lower is less repetitive') },
   ];
+
+  const EN = document.documentElement.lang === 'en';
+  const L = (zh, en) => (EN ? en : zh);
 
   const $ = (selector) => document.querySelector(selector);
   const el = (tag, className, text) => {
@@ -22,10 +25,10 @@
 
   function renderFacts(data) {
     const facts = [
-      [data.total.toLocaleString(), '条活动记录'],
-      [data.vocabulary.toLocaleString(), '维词表'],
-      [data.clusters.length, '个主题'],
-      [data.paths, '条兴趣路径'],
+      [data.total.toLocaleString(), L('条活动记录', 'events')],
+      [data.vocabulary.toLocaleString(), L('维词表', 'vocabulary terms')],
+      [data.clusters.length, L('个主题', 'topics')],
+      [data.paths, L('条兴趣路径', 'interest paths')],
     ];
     const host = $('#facts');
     facts.forEach(([value, label]) => {
@@ -42,8 +45,8 @@
       const card = el('div', 'source-card');
       card.append(el('b', '', source.label));
       const count = el('div', 'src-count', source.count.toLocaleString());
-      count.append(el('small', '', '条'));
-      card.append(count, el('span', 'src-kind', source.kind));
+      count.append(el('small', '', L('条', 'events')));
+      card.append(count, el('span', 'src-kind', EN ? (source.kind_en || source.kind) : source.kind));
       host.append(card);
     });
 
@@ -60,10 +63,11 @@
       const item = el('li');
       const dot = el('span', 'dot');
       dot.style.background = SOURCE_COLORS[index % SOURCE_COLORS.length];
-      item.append(dot, document.createTextNode(`${source.label} · ${source.count.toLocaleString()} 条`));
+      const name = EN ? (source.label_en || source.label) : source.label;
+      item.append(dot, document.createTextNode(`${name} · ${source.count.toLocaleString()}${L(' 条', '')}`));
       legend.append(item);
     });
-    $('#composition-total').textContent = `共 ${total.toLocaleString()} 条`;
+    $('#composition-total').textContent = L(`共 ${total.toLocaleString()} 条`, `${total.toLocaleString()} total`);
   }
 
   function renderTokens(data) {
@@ -108,7 +112,7 @@
       chip.dataset.cluster = String(cluster.id);
       const swatch = el('span', 'cluster-dot');
       swatch.style.background = color(cluster.id);
-      chip.append(swatch, document.createTextNode(`主题 ${cluster.id}`));
+      chip.append(swatch, document.createTextNode(L(`主题 ${cluster.id}`, `Topic ${cluster.id}`)));
       chip.addEventListener('click', () => toggleCluster(cluster.id));
       legend.append(chip);
 
@@ -118,8 +122,8 @@
       const header = el('header');
       const dot = el('span', 'cluster-dot');
       dot.style.background = color(cluster.id);
-      header.append(dot, el('span', 'cluster-name', `主题 ${cluster.id}`),
-                    el('span', 'cluster-size', `${cluster.size} 条`));
+      header.append(dot, el('span', 'cluster-name', L(`主题 ${cluster.id}`, `Topic ${cluster.id}`)),
+                    el('span', 'cluster-size', L(`${cluster.size} 条`, `${cluster.size} events`)));
       card.append(
         header,
         el('p', 'cluster-terms', cluster.terms.slice(0, 4).join(' · ')),
@@ -156,8 +160,8 @@
       const column = el('div', 'rank-col' + (index === 1 ? ' default' : ''));
       const header = el('header');
       header.append(
-        el('b', '', index === 1 ? 'λ = 0.2 · 默认' : 'λ = 0'),
-        el('span', '', `平均两两余弦 ${list.similarity.toFixed(3)}`),
+        el('b', '', index === 1 ? L('λ = 0.2 · 默认', 'λ = 0.2 · default') : 'λ = 0'),
+        el('span', '', L(`平均两两余弦 ${list.similarity.toFixed(3)}`, `mean pairwise cosine ${list.similarity.toFixed(3)}`)),
       );
       const ordered = el('ol', 'rank-ol');
       list.items.forEach((item, position) => {
@@ -233,7 +237,7 @@
       $('#nonzero').textContent = data.nonzero.toLocaleString();
       $('#density').textContent = `${(data.density * 100).toFixed(2)}%`;
     } catch (error) {
-      $('#facts').innerHTML = '<p class="step-note">模型数据加载失败，请检查 model.json 是否已发布。</p>';
+      $('#facts').innerHTML = `<p class="step-note">${L('模型数据加载失败，请检查 model.json 是否已发布。', 'The model data could not be loaded. Check that model.json is published.')}</p>`;
       console.error(error);
     }
   }

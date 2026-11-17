@@ -186,3 +186,5 @@
   .token-line{gap:8px}
   .composition-legend{gap:6px 14px}
 }
+
+html[lang="en"] .cluster-example::before{content:"e.g. "}

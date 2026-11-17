@@ -112,10 +112,10 @@ def illustrations():
 # ============================================================
 # 第三点五部分：导出「模型说明」页需要的投影、主题和指标
 SOURCE_LABELS = {
-    'LCSD': ('康文署文化活动', 'data.gov.hk 开放数据'),
-    'government_open_data': ('Ｍ品牌赛事', 'data.gov.hk 开放数据'),
-    'official_website_extraction': ('港超赛程', '官方网页提取'),
-    'curated_from_official_websites': ('BLAST 香港', '主办方与场馆页面'),
+    'LCSD': ('康文署文化活动', 'data.gov.hk 开放数据', 'LCSD cultural events', 'data.gov.hk open data'),
+    'government_open_data': ('Ｍ品牌赛事', 'data.gov.hk 开放数据', 'M Brand events', 'data.gov.hk open data'),
+    'official_website_extraction': ('港超赛程', '官方网页提取', 'HKFA fixtures', 'official page extraction'),
+    'curated_from_official_websites': ('BLAST 香港', '主办方与场馆页面', 'BLAST Hong Kong', 'organiser and venue pages'),
 }
 
 
@@ -142,8 +142,8 @@ def export_model_page(frame, model, x, path_count):
 
     sources = []
     for key, count in summary['sources'].items():
-        label, kind = SOURCE_LABELS.get(key, (key, '其他'))
-        sources.append(dict(label=label, kind=kind, count=int(count)))
+        label, kind, label_en, kind_en = SOURCE_LABELS.get(key, (key, '其他', key, 'other'))
+        sources.append(dict(label=label, kind=kind, label_en=label_en, kind_en=kind_en, count=int(count)))
 
     # 同一个查询、同一个候选集，只改变 lambda，用来展示 MMR 的效果。
     scores = x @ model.transform(['音樂 music'])[0]

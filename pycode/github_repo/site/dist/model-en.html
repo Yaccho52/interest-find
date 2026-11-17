@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="How Interest HK works: data cleaning, TF-IDF vectorisation, spherical k-means topics, MMR ranking and evaluation.">
+  <title>How the recommendation works · Interest HK</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="refinements.css">
+  <link rel="stylesheet" href="model.css">
+  <script src="model.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html?lang=en" class="brand" aria-label="Interest HK home"><span class="brand-mark">✳</span><span>Interest<span class="brand-light">HK</span><small>HONG KONG, YOUR WAY</small></span></a>
+    <div class="header-right"><span class="live-dot"></span>How the model works<a class="about-button" href="index.html?lang=en">Back to home ↗</a><a class="lang-toggle" href="model.html">中文</a></div>
+  </header>
+
+  <main class="model-main">
+    <section class="model-hero">
+      <span class="kicker">✧ UNDER THE HOOD</span>
+      <h1>What happens <em>behind one tap</em></h1>
+      <p>From the 1,231 events in this catalogue to a column of cards on 34 interest paths. This page opens up the five steps in between: how the data is unified, how text becomes vectors, how topics are clustered, how results are ordered, and how it is checked.</p>
+      <div class="model-facts" id="facts" aria-label="Key numbers"></div>
+      <p class="gentle-note">Every number here is computed offline by the project's Python code; the page only displays it.</p>
+      <noscript><p class="step-note">This page draws its charts with JavaScript; with scripts disabled only the text is shown.</p></noscript>
+    </section>
+
+    <section class="pipeline" aria-label="Pipeline overview">
+      <ol class="flow">
+        <li><span class="flow-num">01</span><b>One catalogue</b><small>four sources, one table</small></li>
+        <li><span class="flow-num">02</span><b>Text vectors</b><small>TF-IDF, 12,000 dimensions</small></li>
+        <li><span class="flow-num">03</span><b>Topics</b><small>spherical k-means, 8 topics</small></li>
+        <li><span class="flow-num">04</span><b>Ranking</b><small>cosine + MMR</small></li>
+        <li><span class="flow-num">05</span><b>Evaluation</b><small>catalogue-internal proxy</small></li>
+      </ol>
+    </section>
+
+    <nav class="model-nav" aria-label="Sections">
+      <a href="#data">01 Data</a>
+      <a href="#vector">02 Vectors</a>
+      <a href="#cluster">03 Topics</a>
+      <a href="#rank">04 Ranking</a>
+      <a href="#eval">05 Evaluation</a>
+    </nav>
+
+    <section class="mstep" id="data">
+      <div class="step-head">
+        <span class="eyebrow">STEP 01 · DATA</span>
+        <h2>Four sources, first made computable</h2>
+        <p class="step-lead">Two sources are open data from data.gov.hk, one is the HKFA fixture page, one is BLAST's organiser and venue pages. Their field names, date formats and category systems all differ, so the first step is not modelling but unification: one ID scheme, one date format, one title key.</p>
+      </div>
+      <div class="source-grid" id="sources"></div>
+      <div class="composition-card">
+        <div class="composition-head"><b>Catalogue composition</b><span id="composition-total"></span></div>
+        <div class="composition-bar" id="composition" aria-hidden="true"></div>
+        <ul class="composition-legend" id="composition-legend"></ul>
+      </div>
+      <div class="clean-rules">
+        <div class="rule"><b>De-duplicate by title key</b><span>Compare titles after stripping punctuation and spaces, so （音樂會） and (音樂會) count as one group; 1,231 records collapse into 893 title groups, which both the recommendation list and the evaluation rely on.</span></div>
+        <div class="rule"><b>Dates: keep only the credible</b><span>An event can span several days and is expanded into a day-by-day list; dates after 2090 are treated as placeholders, removed and flagged so they never sit in "upcoming" forever.</span></div>
+        <div class="rule"><b>Missing data: never invent it</b><span>A missing price is shown as unknown, a missing description stays empty. No generated text is used to "complete" a record, because that would break its provenance.</span></div>
+      </div>
+      <p class="step-note">Chinese descriptions are missing for 84% of records and prices for 54% — these two numbers explain why the model mostly sees titles, and why character fragments were used instead of word segmentation.</p>
+    </section>
+
+    <section class="mstep" id="vector">
+      <div class="step-head">
+        <span class="eyebrow">STEP 02 · TEXT VECTORS</span>
+        <h2>Turn one title into a 12,000-dimensional sparse vector</h2>
+        <p class="step-lead">Chinese has no spaces, so each run of Han characters is cut into two- and three-character fragments; English is split into words. Each fragment is weighted by term frequency × inverse document frequency, and the whole record is scaled to unit length — the closer two records are, the smaller the angle between their vectors.</p>
+      </div>
+      <div class="formula-grid">
+        <div class="formula"><span class="formula-label">TERM FREQUENCY</span><code>tf(t,d) = 1 + ln c(t,d)</code><small>Take the log: ten occurrences is not ten times as important.</small></div>
+        <div class="formula"><span class="formula-label">INVERSE DOCUMENT FREQUENCY</span><code>idf(t) = ln((1+N)/(1+df(t))) + 1</code><small>Add-one smoothing: a term in every document keeps weight 1 instead of being zeroed.</small></div>
+        <div class="formula"><span class="formula-label">COSINE SIMILARITY</span><code>cos(x,y) = x · y</code><small>After L2 normalisation the dot product is the cosine of the angle.</small></div>
+      </div>
+      <div class="split">
+        <div class="token-box">
+          <span class="token-label">TOKENISATION EXAMPLE</span>
+          <div class="token-line"><span class="token-input" id="token-input">粵劇折子戲</span><span class="token-arrow">→</span></div>
+          <div class="token-list" id="tokens"></div>
+          <p class="token-note">No dictionary is needed; the cost is that 音樂 also appears inside 音樂劇 — a known false match.</p>
+        </div>
+        <figure class="cosine-card">
+          <svg viewBox="0 0 360 230" role="img" aria-label="Angle between two unit vectors">
+            <defs>
+              <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 z" fill="#4a6354"></path>
+              </marker>
+            </defs>
+            <line x1="40" y1="190" x2="330" y2="190" stroke="#e3e9df" stroke-width="1"></line>
+            <line x1="40" y1="190" x2="40" y2="40" stroke="#e3e9df" stroke-width="1"></line>
+            <line x1="40" y1="190" x2="168" y2="92" stroke="#345c4b" stroke-width="2.2" marker-end="url(#arrowhead)"></line>
+            <line x1="40" y1="190" x2="286" y2="118" stroke="#6e8a61" stroke-width="2.2" marker-end="url(#arrowhead)"></line>
+            <path d="M 88 190 A 48 48 0 0 0 76 152" fill="none" stroke="#a3b18a" stroke-width="1.6"></path>
+            <text x="96" y="176" font-size="13" fill="#6f7b71">θ</text>
+            <text x="176" y="86" font-size="12" fill="#345c4b">Event A</text>
+            <text x="288" y="112" font-size="12" fill="#6e8a61">Event B</text>
+            <text x="40" y="215" font-size="12" fill="#8a9385">smaller angle → larger cosine → more similar</text>
+          </svg>
+          <figcaption>However high the dimension, only the angle is compared. Normalisation removes the effect of length and leaves direction.</figcaption>
+        </figure>
+      </div>
+      <div class="matrix-card">
+        <div class="matrix-copy">
+          <b>How sparse the matrix is</b>
+          <p>1,231 records × 12,000 terms is 14.77 million cells in theory; only <span id="nonzero">54,000</span> are non-zero, <span id="density">0.37%</span>.</p>
+          <p>Sparsity means one retrieval is one sparse matrix multiplication; the whole catalogue takes a few MB, so a laptop or a browser handles it easily.</p>
+          <p class="matrix-hint">Schematic at a reduced scale: lit cells are terms with a value.</p>
+        </div>
+        <div class="matrix" id="matrix" aria-hidden="true"></div>
+      </div>
+      <p class="step-note">This part was cross-checked against scikit-learn: on the same small corpus the hand-written IDF differs from it by at most about 10⁻⁸, which shows the same formula was reproduced rather than "it happens to run".</p>
+    </section>
+
+    <section class="mstep" id="cluster">
+      <div class="step-head">
+        <span class="eyebrow">STEP 03 · TOPIC STRUCTURE</span>
+        <h2>Spherical k-means: eight topics</h2>
+        <p class="step-lead">All vectors sit on the unit sphere, so ordinary k-means would drag its centres off it with a Euclidean mean. The spherical version maximises the mean cosine from each point to its nearest centre; with assignments fixed, the optimal centre is the sum of its members normalised — a direct consequence of Cauchy–Schwarz. Initialisation is a cosine version of k-means++, and three different seeds are run, keeping the best one.</p>
+      </div>
+      <div class="scatter-card">
+        <div class="legend" id="legend" aria-label="Topic colour legend"></div>
+        <svg id="scatter" viewBox="0 0 1160 540" role="img" aria-label="2D projection of 1,231 events, coloured by the eight topics"></svg>
+        <p class="scatter-caption">2D projection (PCA) · each dot is one event · shown only to inspect structure, not used for recommendations</p>
+      </div>
+      <div class="cluster-grid" id="clusters"></div>
+      <p class="step-note">Click a topic to highlight its dots. Some clusters describe a naming template rather than a semantic theme — for example 51 almost identical dance classes — so these eight clusters remain an analysis layer and are not in the interface; the 34 paths in the product were designed by hand and checked for full coverage.</p>
+    </section>
+
+    <section class="mstep" id="rank">
+      <div class="step-head">
+        <span class="eyebrow">STEP 04 · RANKING</span>
+        <h2>Score with cosine, then remove repetition with MMR</h2>
+        <p class="step-lead">A user's interest becomes one vector: the query vector plus the average vector of the events they picked, then normalised. The score is the cosine. Sorting only by score usually gives five near-identical programmes, so each pick is penalised by how similar it is to what is already selected.</p>
+      </div>
+      <div class="rank-formula">
+        <code>MMR = arg max [(1 − λ) · relevance − λ · max cos(candidate, selected)]</code>
+        <span>λ = 0 is pure relevance; λ = 1 is pure novelty; the product uses 0.2.</span>
+      </div>
+      <div class="rank-compare" id="rank"></div>
+      <div class="sim-card">
+        <div class="sim-head"><b>Mean similarity inside the list</b><span>lower means less repetition</span></div>
+        <div class="sim-bars" id="simbars"></div>
+      </div>
+      <p class="step-note">Same query, same candidate set, only λ changes: the mean pairwise cosine inside the list drops from <span id="sim-a">0.498</span> to <span id="sim-b">0.218</span>. Sweeping λ from 0 to 0.5, 0.2 is the point where precision holds and redundancy falls — a judgement, not an optimum.</p>
+    </section>
+
+    <section class="mstep" id="eval">
+      <div class="step-head">
+        <span class="eyebrow">STEP 05 · EVALUATION</span>
+        <h2>With no user data, a catalogue-internal proxy</h2>
+        <p class="step-lead">The catalogue has no ratings, clicks or ticket records, so supervised learning is impossible. The fallback: sample 100 titles from categories with at least 10 records, exclude the same title group from the candidates, and count how many of the five returned events share the query's category.</p>
+      </div>
+      <div class="metric-rows" id="metrics"></div>
+      <div class="eval-note">
+        <b>How to read these numbers</b>
+        <p>TF-IDF does not beat the keyword baseline on category P@5 (0.610 vs 0.634): the proxy rewards "same category", and the keyword baseline almost always hits when titles repeat literally. The model wins on coverage (0.216 → 0.262) and list diversity (0.383 → 0.333) — for a product that helps people discover, those two are closer to the task; if the task were to find one exact thing, the keyword baseline would be right.</p>
+      </div>
+      <p class="step-note">P@5 always divides by 5: returning a single item still scores 0.2, which prevents "return less to score higher". But it remains a proxy — not user satisfaction, and not an accuracy figure for future data.</p>
+    </section>
+
+    <section class="closing">
+      <div class="closing-copy">
+        <span class="eyebrow">FROM MODEL TO PAGE</span>
+        <h2>And these numbers became this page</h2>
+        <p>The model computes the ordering for 34 interest paths offline and exports it as a ~1 MB <code>data.json</code>; the page only handles clicks, filtering and display. So the ranking is auditable, costs nothing at runtime, and the front end and back end cannot disagree.</p>
+        <p>The screenshot below is from the live site in October 2026.</p>
+      </div>
+      <figure class="shot">
+        <img src="assets/homepage.jpg" alt="Interest HK home page: three directions and their event counts" loading="lazy" width="1264" height="1032">
+        <figcaption>Home page: three directions, 1,103 / 126 / 2 records, no sign-in.</figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="footer-brand">✳ Interest HK</span>
+    <span>Let the next outing start with a little curiosity.</span>
+    <a href="index.html?lang=en">Back to home ↗</a>
+  </footer>
+</body>
+</html>

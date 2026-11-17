@@ -7,3 +7,7 @@
 .session-time{color:#71836d;font-size:11px;margin:6px 0 0 23px;line-height:1.7}
 .sort-label{flex-shrink:0}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* 语言切换按钮 */
+.lang-toggle{border:1px solid #e2e8de;background:#fff;border-radius:20px;padding:5px 12px;font-size:11px;color:#5f6f63;letter-spacing:.4px}
+.lang-toggle:hover{background:var(--light);border-color:#c9d8c4;color:var(--green)}
