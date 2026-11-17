@@ -84,7 +84,7 @@
 
 /* ---------- 03 聚类 ---------- */
 .scatter-card{border:1px solid var(--line);border-radius:22px;padding:18px 20px 12px;background:#fff}
-.scatter-card svg{width:100%;height:auto;display:block;margin-top:4px}
+.scatter-card svg{width:100%;height:auto;aspect-ratio:1160/540;display:block;margin-top:4px}
 .scatter-card circle{transition:opacity .18s,r .18s}
 .legend{display:flex;flex-wrap:wrap;gap:6px}
 .legend-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #e6ece3;background:#fff;border-radius:20px;padding:5px 11px;font-size:11px;color:#77857a}

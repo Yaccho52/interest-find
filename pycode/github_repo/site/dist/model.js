@@ -1,6 +1,9 @@
 /* ============================================================ */
 /* 模型说明页：读取 model.json，渲染图示与交互 */
 (() => {
+  const EN = document.documentElement.lang === 'en';
+  const L = (zh, en) => (EN ? en : zh);
+
   const COLORS = ['#345c4b', '#6e8a61', '#93a86f', '#c2a878', '#b08968', '#a9768e', '#6c6aa8', '#7c9aa6'];
   const SOURCE_COLORS = ['#345c4b', '#6e8a61', '#b08968', '#c2a878'];
   const METHOD_LABELS = { keyword: L('关键词基线', 'Keyword baseline'), tfidf: 'TF-IDF', tfidf_mmr: 'TF-IDF + MMR' };
@@ -10,9 +13,6 @@
     { key: 'catalog_coverage', label: L('目录覆盖率', 'Catalogue coverage'), hint: L('越高越好', 'higher is better') },
     { key: 'mean_intra_list_similarity', label: L('列表内相似度', 'Intra-list similarity'), hint: L('越低越不重复', 'lower is less repetitive') },
   ];
-
-  const EN = document.documentElement.lang === 'en';
-  const L = (zh, en) => (EN ? en : zh);
 
   const $ = (selector) => document.querySelector(selector);
   const el = (tag, className, text) => {
@@ -97,7 +97,7 @@
       chip.classList.toggle('active', Number(chip.dataset.cluster) === activeCluster);
     });
     document.querySelectorAll('#scatter circle').forEach((point) => {
-      const match = activeCluster === null || Number(point.dataset.cluster) === activeCluster;
+      const match = activeCluster === null || Number(point.getAttribute('data-cluster')) === activeCluster;
       point.setAttribute('opacity', match ? '0.86' : '0.08');
       point.setAttribute('r', match && activeCluster !== null ? '4.6' : '3.2');
     });
@@ -140,7 +140,6 @@
     const width = 1160;
     const height = 540;
     const pad = 42;
-    const fragment = document.createDocumentFragment();
     data.projection.forEach(([x, y, cluster]) => {
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', (pad + x * (width - pad * 2)).toFixed(1));
@@ -148,10 +147,9 @@
       circle.setAttribute('r', '3.2');
       circle.setAttribute('fill', color(cluster));
       circle.setAttribute('opacity', '0.72');
-      circle.dataset.cluster = String(cluster);
-      fragment.append(circle);
+      circle.setAttribute('data-cluster', String(cluster));
+      svg.appendChild(circle);
     });
-    svg.append(fragment);
   }
 
   function renderRank(data) {
